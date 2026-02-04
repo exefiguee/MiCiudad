@@ -1,6 +1,7 @@
 /// <reference types="google.maps" />
 
-const GOOGLE_API_KEY = 'AIzaSyC0u-LoJuQAd7rQ_rXff7S1zC2PhJ-en8g'; // Pegá tu API Key acá
+const GOOGLE_API_KEY = import.meta.env.VITE_FIREBASE_API_KEY++
+;
 
 export interface PlaceResult {
   name: string;
