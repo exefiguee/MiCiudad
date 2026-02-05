@@ -11,6 +11,7 @@ import { db } from './firebase';
 import type { PlaceResult } from './googlePlaces';
 
 export interface Partner extends PlaceResult {
+    slug?: string;    
   telefono?: string;
   whatsapp?: string;
   logo?: string;
@@ -31,9 +32,13 @@ export interface MenuItem {
 }
 
 // Obtener negocios asociados activos
+
+
+// Obtener negocios asociados activos (FILTRADOS POR UBICACIÓN)
 export async function getPartnerBusinesses(
   userLat?: number,
-  userLng?: number
+  userLng?: number,
+  maxDistanceKm: number = 50 // ✅ Solo negocios a menos de 50km
 ): Promise<Partner[]> {
   try {
     const q = query(
@@ -44,7 +49,9 @@ export async function getPartnerBusinesses(
 
     const snapshot = await getDocs(q);
     
-    const partners: Partner[] = snapshot.docs.map(doc => {
+    const partners: Partner[] = [];
+    
+    snapshot.docs.forEach(doc => {
       const data = doc.data();
       
       // Calcular distancia si tenemos ubicación del usuario
@@ -56,12 +63,20 @@ export async function getPartnerBusinesses(
           data.ubicacion.lat, 
           data.ubicacion.lng
         );
+        
+        // ✅ FILTRO: Solo agregar si está dentro del radio
+        if (distance > maxDistanceKm) {
+          return; // Skip este negocio, está muy lejos
+        }
+      } else if (userLat && userLng) {
+        // Si el negocio no tiene ubicación, no lo mostramos
+        return;
       }
 
       // Verificar si está abierto según horarios
       const isOpen = checkIfOpen(data.horarios);
 
-      return {
+      partners.push({
         placeId: doc.id,
         name: data.nombre,
         address: data.direccion,
@@ -72,22 +87,22 @@ export async function getPartnerBusinesses(
         distance,
         isOpen,
         isPartner: true,
+        slug: data.slug, // ✅ No olvides el slug!
         whatsapp: data.whatsapp,
         logo: data.logo,
         categorias: data.categorias,
         horarios: data.horarios,
         tieneMenu: data.tieneMenu,
-      };
+      });
     });
 
-    // Ordenar por distancia
+    // Ordenar por distancia (más cercanos primero)
     return partners.sort((a, b) => (a.distance || 999) - (b.distance || 999));
   } catch (error) {
     console.error('Error cargando partners:', error);
     return [];
   }
 }
-
 // Obtener menú de un negocio
 export async function getPartnerMenu(negocioId: string): Promise<MenuItem[]> {
   try {
