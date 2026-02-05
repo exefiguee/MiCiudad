@@ -4,6 +4,12 @@ import Login from './pages/Login';
 import Location from './pages/Location';
 import Home from './pages/Home';
 import Delivery from './pages/Delivery';
+import PlaceDetail from './pages/PlaceDetail';
+import AdminLayout from './admin/AdminLayout';
+import AdminNegocios from './admin/AdminNegocios';
+import AdminNegocioForm from './admin/AdminNegocioForm';
+import NegocioPanel from './negocio/NegocioPanel';
+
 import './App.css';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -44,6 +50,16 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
+      <Route path="/delivery/:placeId" element={<PlaceDetail />} />
+
+      <Route path="/admin" element={<AdminLayout />}>
+  <Route index element={<AdminNegocios />} />
+  <Route path="negocios" element={<AdminNegocios />} />
+  <Route path="negocios/nuevo" element={<AdminNegocioForm />} />
+  <Route path="negocios/:id" element={<NegocioPanel />} />
+</Route>
+
+
     </Routes>
   );
 }

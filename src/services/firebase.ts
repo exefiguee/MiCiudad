@@ -14,6 +14,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export const db = getFirestore(app);
+// 🔥 ESTO ES LO IMPORTANTE: especifica el nombre de la BD
+export const db = getFirestore(app, 'micudad');  // <-- AGREGAR ESTO
+
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();

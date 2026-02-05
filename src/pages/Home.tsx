@@ -11,6 +11,8 @@ const categories: Category[] = [
   { id: '6', name: 'Servicios', icon: '🏥', path: '/servicios', color: '#F7DC6F' },
   { id: '7', name: 'Gastronomía', icon: '🍽️', path: '/gastronomia', color: '#BB8FCE' },
   { id: '8', name: 'Entretenimiento', icon: '🎉', path: '/entretenimiento', color: '#85C1E2' },
+  { id: '9', name: 'Compra y Venta', icon: '🎉', path: '/compraventa', color: '#85e2a1' },
+
 ];
 
 function Home() {
